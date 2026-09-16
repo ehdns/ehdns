@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Gaegu&family=Gamja+Flower&display=swap');
+
+html {
+  font-size: 100%;
+}
+
+body {
+  font-family: "Gaegu", cursive, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+button {
+  font-family: inherit;
+  font-size: 1.25rem;
+  padding: 0.5em 1em;
+}
+
+h1 {
+  font-family: "Gaegu", cursive, sans-serif;
+  color: #8ea8f5
+}
+h2 {
+  background-color: #f3f9dc;
+  color: #2659f2;
+}
+p {
+  color: rgb(68, 52, 85);
+}
+
+.caption {
+  color: #443455;
+}
+
+.card {
+  margin: 12px 0;
+  padding: 16px;
+  border: 2px solid #dfe4ef;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+.card.recommended {
+  border-color: #00a896;
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.card p {
+  margin-bottom: 12px;
+}
+
+/* 링크를 버튼처럼 보이게 스타일링 */
+.card a, nav a {
+  display: inline-block;
+  padding: 8px 14px;
+  background-color: #00a896;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+}
+
+.card a:hover, nav a:hover {
+  opacity: 0.85;
+}
+
+nav {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+body.page-home {
+  background-color: #f7fafc;
+}
+body.page-home h1 {
+  color: #2b6cb0;
+}
+
+body.page-concert {
+  background-color: #fffaf0;
+}
+body.page-concert h1 {
+  color: #c05621;
+}
+body.page-concert nav a {
+  background-color: #c05621;
+}
+
+body.page-khall {
+  background-color: #f0fff4;
+}
+body.page-khall h1 {
+  color: #276749;
+}
+body.page-khall nav a {
+  background-color: #276749;
+}
+
+body.page-smurfs {
+  background-color: #ebf8ff;
+}
+body.page-smurfs h1 {
+  color: #2b6cb0;
+}
+body.page-smurfs nav a {
+  background-color: #3182ce;
+}
