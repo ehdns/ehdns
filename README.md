@@ -121,6 +121,6 @@ html
   (손글씨 느낌으로 '누군가가 남긴 탐험 지도' 컨셉을 살리기 위해 사용)
 - 캠퍼스 지도 (`cukmap.png`): 네이버 지도의 가톨릭대학교 성심교정 화면을 캡처하여 사용
 - 김수환관 사진 (`k1.png`, `k2.png`): [가톨릭대 공식 네이버 블로그](https://blog.naver.com/ilovecuk/221675864799)
-- 콘서트홀 외부 사진 (`ch2.png`)**: [가홍이 블로그](https://m.blog.naver.com/lovecuk/220000651251)
+- 콘서트홀 외부 사진 (`ch2.png`): [가홍이 블로그](https://m.blog.naver.com/lovecuk/220000651251)
 - 레슨실 내부 (`ch1.png`), 스머프 동산 (`sm1.png`, `sm2.png`): 본인 촬영
 - 커서·보물상자 이미지 (`rjeek.png`, `ckwdma.png`, `box.png`): (ai 활용 이미지)
