@@ -8,38 +8,46 @@
 </head>
 <body class="page-smurfs">
   <header>
-    <p><a href="index.html">← 홈 화면</a></p>
+    <p><a href="index.html" class="home-link">← 홈 화면</a></p>
     <h1>스머프 동산 (햇빛동산)의 전경</h1>
     <p>날씨 좋은 날 동기들과 배달음식으로 피크닉하기 좋은 장소</p>
   </header>
 
   <main>
-    <div>
-      <img src="./images/sm1.png" width="300" alt="낮의 스머프동산">
-      <p class="caption">낮의 스머프동산</p>
-    </div>
-    <div>
-      <img src="./images/sm2.png" width="300" alt="밤의 다맛제 스머프동산">
-      <p class="caption">밤의 다맛제 스머프동산</p>
-    </div>
+    <section class="photo-grid">
+      <figure>
+        <img src="./images/sm1.png" alt="낮의 스머프동산">
+        <figcaption class="caption">낮의 스머프동산</figcaption>
+      </figure>
+      <figure>
+        <img src="./images/sm2.png" alt="밤의 다맛제 스머프동산">
+        <figcaption class="caption">밤의 다맛제 스머프동산</figcaption>
+      </figure>
+    </section>
 
-    <h2>이 장소가 의미 있는 이유</h2>
-    <p>봄, 가을 맑은 날씨에 늘 동기들과의 추억이 여기서 쌓였기 때문입니다.</p>
+    <section>
+      <h2>이 장소가 의미 있는 이유</h2>
+      <p>봄, 가을 맑은 날씨에 늘 동기들과의 추억이 여기서 쌓였기 때문입니다.</p>
+    </section>
 
-    <h2>찾아가는 방법</h2>
-    <p>정문에서 하염없이 걸어가다 보면 나오는 초록 언덕과 가톨릭대학교 표지판</p>
-    <p><a href="https://naver.me/Gj7QFKZ1" target="_blank">온라인 지도에서 위치 확인</a></p>
+    <section>
+      <h2>찾아가는 방법</h2>
+      <p>정문에서 하염없이 걸어가다 보면 나오는 초록 언덕과 가톨릭대학교 표지판</p>
+      <p><a href="https://naver.me/Gj7QFKZ1" target="_blank">온라인 지도에서 위치 확인</a></p>
+    </section>
 
-    <h2>여기에서 해볼 것</h2>
-    <ul>
-      <li>날씨 좋은 중간고사 시험 기간에 야외 공부하기</li>
-      <li>10월 축제인 '다맛제'를 신나게 즐기기</li>
-    </ul>
+    <section>
+      <h2>여기에서 해볼 것</h2>
+      <ul>
+        <li>날씨 좋은 중간고사 시험 기간에 야외 공부하기</li>
+        <li>10월 축제인 '다맛제'를 신나게 즐기기</li>
+      </ul>
+    </section>
   </main>
 
-  <nav aria-label="장소 페이지 이동">
-   <a href="concerthall.html">← 콘서트홀 가기</a>
-   <a href="K-hall.html">김수환관 가기 →</a>
+  <nav class="bottom-nav" aria-label="장소 페이지 이동">
+    <a href="concerthall.html">← 콘서트홀 가기</a>
+    <a href="K-hall.html">김수환관 가기 →</a>
   </nav>
 </body>
 </html>
