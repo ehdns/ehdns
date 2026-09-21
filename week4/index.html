@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>캠퍼스 핫스팟 탐험 - 장소 선택</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>나만의 캠퍼스 핫스팟</h1>
+    <p>가톨릭대 성심교정에서 제가 아끼는 세 장소입니다. 버튼을 누르면 설명과 지도가 함께 바뀝니다.</p>
+  </header>
+
+  <!-- 버튼은 app.js가 places 배열을 보고 자동으로 만들어 넣습니다 -->
+  <nav id="buttons" aria-label="장소 선택"></nav>
+
+  <main class="layout">
+
+    <!-- 왼쪽: 장소 설명 (세 개 모두 HTML에 있지만 한 번에 하나만 보입니다) -->
+    <div class="place-panel">
+
+      <section id="khall" class="place">
+        <h2>지박령이 되어버리는 김수환관</h2>
+        <p class="lead">언덕에 지치지 않게 해주는 가톨릭대의 심장</p>
+
+        <div class="photos">
+          <figure>
+            <img src="./images/k2.jpg" alt="김수환관 건물 외부" loading="lazy">
+            <figcaption>김수환관 건물</figcaption>
+          </figure>
+          <figure>
+            <img src="./images/k1.jpg" alt="인문 커뮤니티 라운지 1, 2층" loading="lazy">
+            <figcaption>인문 커뮤니티 라운지 1, 2층</figcaption>
+          </figure>
+        </div>
+
+        <h3>이 장소가 의미 있는 이유</h3>
+        <p>김수환관에 엘리베이터가 없었다고 생각하면 정말 끔찍합니다. 시험기간에 중앙도서관까지 올라가기 힘들 때 학생식당과 인문 커뮤니티 라운지를 애용합니다.</p>
+        <p>밥, 공부, 강의, 카페, 헬스, 스터디 모임까지 <strong>모든 것을 한 건물에서 해결할 수 있는 유일한 곳</strong>입니다.</p>
+
+        <h3>이래서 추천합니다</h3>
+        <ul>
+          <li>새 학기 맞이로 헬스장 등록하기</li>
+          <li>학생식당에서 간식 먹으면서 공부하기</li>
+        </ul>
+
+        <h3>찾아가는 방법</h3>
+        <p>가톨릭대 정문 바로 앞 건물입니다.
+          <a href="https://naver.me/Gq8F0xHH" target="_blank" rel="noopener">네이버 지도에서 보기</a>
+        </p>
+      </section>
+
+      <section id="concert" class="place" hidden>
+        <h2>가장 의미있는 콘서트홀</h2>
+        <p class="lead">음악과 동기들과 배달 시켜먹기 좋은 장소</p>
+
+        <div class="photos">
+          <figure>
+            <img src="./images/ch2.jpg" alt="콘서트홀 건물 외부" loading="lazy">
+            <figcaption>콘서트홀 외부</figcaption>
+          </figure>
+          <figure>
+            <img src="./images/ch1.jpg" alt="콘서트홀 레슨실 내부의 피아노" loading="lazy">
+            <figcaption>레슨실 내부</figcaption>
+          </figure>
+        </div>
+
+        <h3>이 장소가 의미 있는 이유</h3>
+        <p>저는 음악과로 입학해서 전과했기에, <strong>저의 첫 가톨릭대</strong>인 콘서트홀이 어떤 장소보다도 가장 뜻깊습니다.</p>
+
+        <h3>이래서 추천합니다</h3>
+        <ul>
+          <li>5월 아우름제 때 음악과에서 여는 귀신의 집 탐방하기</li>
+          <li>연주회가 열릴 때 반드시 감상해보기</li>
+        </ul>
+
+        <h3>찾아가는 방법</h3>
+        <p>정문에서 하염없이 올라가다 보면 나오는 으스스한 건물입니다.
+          <a href="https://naver.me/x2cKNWRK" target="_blank" rel="noopener">네이버 지도에서 보기</a>
+        </p>
+      </section>
+
+      <section id="smurfs" class="place" hidden>
+        <h2>피크닉의 대명사 스머프 동산</h2>
+        <p class="lead">날씨 좋은 날 동기들과 배달음식으로 피크닉하기 좋은 장소</p>
+
+        <div class="photos">
+          <figure>
+            <img src="./images/sm1.jpg" alt="낮의 스머프 동산 전경" loading="lazy">
+            <figcaption>낮의 스머프 동산</figcaption>
+          </figure>
+          <figure>
+            <img src="./images/sm2.jpg" alt="다맛제가 열린 밤의 스머프 동산" loading="lazy">
+            <figcaption>밤의 다맛제 스머프 동산</figcaption>
+          </figure>
+        </div>
+
+        <h3>이 장소가 의미 있는 이유</h3>
+        <p>봄, 가을 맑은 날씨에 늘 <strong>동기들과의 추억이 여기서 쌓였기</strong> 때문입니다.</p>
+
+        <h3>이래서 추천합니다</h3>
+        <ul>
+          <li>날씨 좋은 중간고사 기간에 야외에서 공부하기</li>
+          <li>10월 축제인 '다맛제'를 신나게 즐기기</li>
+        </ul>
+
+        <h3>찾아가는 방법</h3>
+        <p>정문에서 하염없이 걸어가다 보면 나오는 초록 언덕과 가톨릭대학교 표지판이 있는 곳입니다.
+          <a href="https://naver.me/Gj7QFKZ1" target="_blank" rel="noopener">네이버 지도에서 보기</a>
+        </p>
+      </section>
+
+    </div>
+
+    <!-- 오른쪽: 선택한 장소의 Google 지도 -->
+    <aside class="map-panel">
+      <h2 id="map-heading">선택한 장소의 위치</h2>
+      <!-- 지도(iframe)와 직접 얹은 핀을 겹치기 위한 기준 상자 -->
+      <div class="map-frame">
+        <iframe
+          id="map"
+          title="선택 장소 Google 지도"
+          width="600" height="360"
+          referrerpolicy="strict-origin-when-cross-origin"
+          loading="lazy"
+          allowfullscreen></iframe>
+
+        <!-- 지도는 좌표 정중앙에 맞춰져 있으므로, 정중앙에 핀을 얹으면 그 건물을 가리킨다.
+             pointer-events:none 이라 지도 조작을 방해하지 않는다. -->
+        <div class="map-pin" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="34" height="34">
+            <path d="M12 0C7 0 3 4 3 9c0 6.6 8.1 14.4 8.4 14.7a.8.8 0 0 0 1.2 0C13 23.4 21 15.6 21 9c0-5-4-9-9-9z"/>
+            <circle cx="12" cy="9" r="3.4" fill="#fff"/>
+          </svg>
+          <span id="map-pin-label" class="map-pin-label"></span>
+        </div>
+      </div>
+      <p><a id="map-link" class="map-link" target="_blank" rel="noopener">Google 지도 새 창에서 열기</a></p>
+    </aside>
+
+  </main>
+
+  <footer class="page-footer">
+    <p><a href="../index.html">← 3주차 캠퍼스 보물찾기 지도로 돌아가기</a></p>
+  </footer>
+
+</body>
+</html>
