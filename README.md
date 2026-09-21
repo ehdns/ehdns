@@ -98,7 +98,6 @@ html
 
   지도 핫스팟: 투명한 영역 + 마우스를 올리면 말풍선 
   보물상자 이미지(box.png) + 터치 시 바로 이동 -> 스마트폰에는 `:hover`가 없어서 숨겨진 영역을 찾을 방법이 없음 
- 말풍선  `opacity`로 스르륵 등장  
  `display: none` 호버가 없으니 띄울 수 없고, 250px 말풍선은 좁은 화면을 넘침 
  커스텀 커서: 탐험가 / 만세 캐릭터 해제 -> 마우스 포인터 자체가 없음 
  사진  가로 2단  세로 1단 -> 좁은 화면에서 2단은 사진이 너무 작아짐 
@@ -106,34 +105,6 @@ html
  안내 문구: "커서로 찾아 클릭하세요" -> "보물상자를 눌러보세요" 변경 (조작 방법이 다르기 때문)
  글자·여백 변경
 
-핵심 코드:
-
-css
-@media (max-width: 600px) {
-  /* PC에서 '투명 영역'이던 곳에 보물상자 이미지를 깐다.
-     위치(top/left)는 %로 잡혀 있어 그대로 물려받으므로 좌표를 다시 잡을 필요가 없다. */
-  .map-target {
-    width: 48px;
-    height: 48px;
-    background-image: url('./images/box.png');
-    background-size: auto 85%;      /* 원본이 가로로 길어 높이 기준으로 맞춤 */
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));  /* 지도 위에서 안 묻히게 */
-  }
-
-  /* 누르는 동안 살짝 커져서 '눌렸다'는 느낌을 준다 (마우스의 hover 대체) */
-  .map-target:active { transform: translate(-50%, -50%) scale(1.18); }
-
-  /* 호버가 없으므로 말풍선은 숨기고, 터치하면 바로 페이지로 이동 */
-  .treasure-box { display: none !important; }
-
-  /* 사진과 버튼을 가로 → 세로로 */
-  .photo-grid  { flex-direction: column; }
-  .bottom-nav  { flex-direction: column; }
-  .bottom-nav a { width: 100%; box-sizing: border-box; padding: 14px; }
-}
-```
 
 - 휴대전화에서 네 페이지를 확인한 결과
 
