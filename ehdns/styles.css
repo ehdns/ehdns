@@ -1,0 +1,298 @@
+@import url('https://fonts.googleapis.com/css2?family=Gaegu&family=Gamja+Flower&display=swap');
+
+/* =========================================
+   1. 기본 레이아웃 (1단 중앙 정렬)
+========================================= */
+html {
+  font-size: 100%;
+  /* 아이폰을 가로로 눕혔을 때 글자가 제멋대로 커지는 것 방지 */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: "Gaegu", cursive, sans-serif;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 어떤 사진도 화면 밖으로 삐져나가지 않게 하는 반응형 이미지 기본값 */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
+/* =========================================
+   2. 타이포그래피 & 기본 색상표
+========================================= */
+h1 { color: #8ea8f5; }
+
+h2 {
+  background-color: #f3f9dc;
+  color: #2659f2;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-top: 32px;
+}
+
+p, li { color: #443455; }
+
+/* 홈으로 돌아가는 링크 (모바일에서 손가락으로 누르기 쉽게 알약 모양) */
+.home-link {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.06);
+  color: #3a3a3a;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.home-link:hover { background-color: rgba(0, 0, 0, 0.12); }
+
+/* PC에서만 보이는 문구 / 모바일에서만 보이는 문구 */
+.mobile-only { display: none; }
+
+/* =========================================
+   3. 사진 갤러리 (PC 2단 → 모바일 1단)
+========================================= */
+.photo-grid {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.photo-grid figure {
+  flex: 1 1 0;
+  margin: 0;
+  text-align: center;
+}
+
+/* 사진마다 원본 비율이 제각각이라 최대 높이를 정해 한눈에 들어오게 함 */
+.photo-grid img {
+  max-height: 380px;
+  width: auto;
+  margin: 0 auto;
+}
+
+.caption {
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* =========================================
+   4. 인터랙티브 캠퍼스 탐험 지도 (보물찾기)
+========================================= */
+.campus-map-container {
+  position: relative;
+  max-width: 100%;
+  margin-top: 16px;
+
+  /* PC: 지도 위에서는 커서가 '걷는 탐험가'로 바뀜 */
+  cursor: url('./images/rjeek.png') 16 16, auto;
+}
+
+.map-bg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 2px solid #dfe4ef;
+  border-radius: 8px;
+}
+
+/* 지도 위 숨겨진 핫스팟 (PC에서는 투명한 탭바) */
+.map-target {
+  position: absolute;
+  width: 45px;
+  height: 45px;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+
+  display: block;
+  text-decoration: none;
+}
+
+.map-target:hover {
+  /* PC: 장소를 찾으면 커서가 '만세하는 탐험가'로 바뀜 */
+  cursor: url('./images/ckwdma.png') 16 16, pointer;
+  z-index: 20;
+}
+
+/* 보물상자 말풍선 (PC 전용 - 마우스를 올렸을 때만 등장) */
+.treasure-box {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translate(-50%, -100%) scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+
+  background-color: #fff9e6;
+  border: 3px solid #ff5722;
+  border-radius: 12px;
+  padding: 16px;
+  width: 250px;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 8px 16px rgba(255, 87, 34, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+
+.map-target:hover .treasure-box {
+  opacity: 1;
+  transform: translate(-50%, -100%) scale(1);
+  pointer-events: auto;
+}
+
+.treasure-box .badge {
+  display: inline-block;
+  background-color: #ff5722;
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.treasure-box h3 {
+  margin: 0 0 8px 0;
+  color: #3e2723;
+  font-size: 1.15rem;
+}
+
+.treasure-box p {
+  margin: 0;
+  color: #5d4037;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* 핫스팟 건물 위치 (px가 아닌 %라서 화면이 작아져도 위치가 안 틀어짐) */
+.pin-khall   { top: 76%; left: 71%; }
+.pin-concert { top: 24%; left: 31%; }
+.pin-smurfs  { top: 45%; left: 55%; }
+
+/* =========================================
+   5. 버튼 및 하단 네비게이션
+========================================= */
+.bottom-nav {
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bottom-nav a {
+  display: inline-block;
+  padding: 8px 14px;
+  background-color: #00a896;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  transition: opacity 0.2s;
+  text-align: center;
+}
+
+.bottom-nav a:hover { opacity: 0.85; }
+
+/* =========================================
+   6. 네 페이지, 네 가지 분위기 (테마 컬러)
+========================================= */
+body.page-home { background-color: #f7fafc; }
+body.page-home h1 { color: #2b6cb0; }
+
+body.page-concert { background-color: #FDF5E6; }
+body.page-concert h1 { color: #D2691E; }
+body.page-concert h2 {
+  background-color: #F5DEB3;
+  color: #8B4513;
+}
+body.page-concert p, body.page-concert li { color: #5C4033; }
+body.page-concert .bottom-nav a { background-color: #D2691E; }
+
+body.page-khall { background-color: #F4F9F4; }
+body.page-khall h1 { color: #2A9D8F; }
+body.page-khall h2 {
+  background-color: #D1E8E2;
+  color: #197278;
+}
+body.page-khall p, body.page-khall li { color: #2F4F4F; }
+body.page-khall .bottom-nav a { background-color: #2A9D8F; }
+
+body.page-smurfs { background-color: #F0F8FF; }
+body.page-smurfs h1 { color: #0288D1; }
+body.page-smurfs h2 {
+  background-color: #C8E6C9;
+  color: #2E7D32;
+}
+body.page-smurfs p, body.page-smurfs li { color: #154360; }
+body.page-smurfs .bottom-nav a { background-color: #0288D1; }
+
+/* =========================================
+   7. 모바일 반응형 (Media Query)
+   화면 너비 600px 이하 = 스마트폰일 때만 적용
+========================================= */
+@media (max-width: 600px) {
+
+  /* (1) 글자와 여백을 줄여 좁은 화면을 최대한 넓게 쓴다 */
+  html { font-size: 90%; }
+  body { padding: 14px; }
+  h1 { font-size: 1.9rem; line-height: 1.3; }
+  h2 { font-size: 1.35rem; margin-top: 24px; }
+
+  /* (2) 사진: PC의 가로 2단 배치를 세로 1단으로 쌓는다 */
+  .photo-grid { flex-direction: column; gap: 12px; }
+  .photo-grid img { max-height: 300px; }
+
+  /* (3) 하단 이동 버튼: 가로 2개 → 세로로 꽉 차게 (손가락 터치 영역 확보) */
+  .bottom-nav { flex-direction: column; gap: 10px; }
+  .bottom-nav a {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    font-size: 1.15rem;
+  }
+  .home-link { padding: 10px 18px; }
+
+  /* (4) 스마트폰에는 마우스가 없으므로 커스텀 커서를 해제한다 */
+  .campus-map-container { cursor: default; }
+  .map-target:hover { cursor: pointer; }
+
+  /* (5) 핵심! PC에서 '투명 탭바'였던 자리에 보물상자(box.png)를 띄운다 */
+  .map-target {
+    width: 48px;
+    height: 48px;
+
+    background-image: url('./images/box.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    /* box.png 원본이 가로로 긴 이미지(2816x1536)라 좌우 여백이 많다.
+       높이를 기준으로 85% 크기를 맞추고 가운데 정렬해 상자만 꽉 차게 보이게 함 */
+    background-size: auto 85%;
+
+    /* 지도 위에서 상자가 묻히지 않도록 그림자 */
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
+
+    transition: transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 손가락으로 누르는 순간 상자가 살짝 커져서 '눌렸다'는 느낌을 준다 */
+  .map-target:active {
+    transform: translate(-50%, -50%) scale(1.18);
+  }
+
+  /* (6) 호버가 없으니 말풍선은 숨긴다 → 상자를 터치하면 바로 페이지로 이동 */
+  .treasure-box { display: none !important; }
+
+  /* (7) 안내 문구를 모바일용으로 교체 */
+  .pc-only { display: none; }
+  .mobile-only { display: block; }
+}

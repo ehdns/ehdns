@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>나만의 캠퍼스 핫스팟</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page-home">
+  <header>
+    <h1>나만의 캠퍼스 핫스팟</h1>
+    <p>오늘은 성심교정을 둘러봅니다.</p>
+    <p class="pc-only">지도 위를 탐험하며 숨겨진 3개의 핫스팟을 찾아 클릭해보세요!</p>
+    <p class="mobile-only">지도 위에 놓인 보물상자 3개를 눌러 장소를 확인해보세요!</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>가톨릭대 캠퍼스 탐험</h2>
+
+      <div class="campus-map-container">
+        <!-- 배경 지도 이미지 -->
+        <img src="./images/cukmap.png" alt="가톨릭대학교 캠퍼스 지도" class="map-bg">
+
+        <!-- 김수환관: PC는 투명 탭바 / 모바일은 보물상자(box.png) -->
+        <a href="K-hall.html" class="map-target pin-khall" aria-label="김수환관 소개 페이지로 이동">
+          <div class="treasure-box">
+            <span class="badge">찾 았 다 - !</span>
+            <h3>지박령이 되어버리는 김수환관</h3>
+            <p>: 식사부터 스터디까지 해결 가능한 나의 구원자</p>
+          </div>
+        </a>
+
+        <!-- 콘서트홀 -->
+        <a href="concerthall.html" class="map-target pin-concert" aria-label="콘서트홀 소개 페이지로 이동">
+          <div class="treasure-box">
+            <span class="badge">찾 았 다 - !</span>
+            <h3>가장 의미있는 콘서트홀</h3>
+            <p>: 음악과의 추억이 깃든 특별한 장소</p>
+          </div>
+        </a>
+
+        <!-- 스머프 동산 -->
+        <a href="smurfs.html" class="map-target pin-smurfs" aria-label="스머프 동산 소개 페이지로 이동">
+          <div class="treasure-box">
+            <span class="badge">찾 았 다 - !</span>
+            <h3>피크닉의 대명사 스머프 동산</h3>
+            <p>: 날씨 좋은 날 배달음식과 함께하는 야외 힐링</p>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <section>
+      <ul style="margin-top: 24px;">
+        <li><a href="https://www.catholic.ac.kr/" target="_blank">학교 홈페이지에서 더 알아보기</a></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
