@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>산업별 취업자 한눈에 보기</title>
+  <link rel="stylesheet" href="employment.css">
+  <script src="employment.js" defer></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>2025 산업별 취업자 한눈에 보기</h1>
+    <p>통계청 KOSIS에서 내려받은 CSV 파일을 JavaScript로 읽어서 그린 페이지입니다.
+      기간을 고르고 막대를 누르면 그 산업에서 일하는 사람들의 나이·학력·고용 형태를 볼 수 있습니다.</p>
+    <p class="file-line">
+      불러온 파일: <strong id="file-name">없음</strong>
+      <label class="file-pick">다른 CSV 파일 열기
+        <input type="file" id="file-input" accept=".csv,text/csv">
+      </label>
+    </p>
+  </header>
+
+  <!-- CSV를 불러오는 동안, 또는 불러오지 못했을 때 보이는 안내 문구 -->
+  <p id="status" class="status" role="status">CSV 파일을 불러오는 중입니다…</p>
+
+  <!-- 아래 세 구역은 CSV를 다 읽은 뒤에 employment.js가 hidden을 풀어 보여 줍니다 -->
+
+  <!-- 1. 요약 숫자 네 개 -->
+  <section id="summary-section" aria-labelledby="summary-title" data-needs-data hidden>
+    <h2 id="summary-title" class="section-title">요약</h2>
+    <ul id="summary" class="kpis"></ul>
+  </section>
+
+  <!-- 2. 기간 버튼 + 막대그래프 + 자세히 보기 -->
+  <section id="explore-section" aria-labelledby="explore-title" data-needs-data hidden>
+    <h2 id="explore-title" class="section-title">산업별로 살펴보기</h2>
+
+    <div class="toolbar">
+      <span id="period-label" class="toolbar-label">기간</span>
+      <!-- 버튼은 CSV 1행에 있는 기간을 보고 자동으로 만듭니다 -->
+      <div id="period-buttons" class="period-buttons" role="group" aria-labelledby="period-label"></div>
+    </div>
+
+    <div class="layout">
+
+      <!-- 왼쪽: 산업별 막대그래프 -->
+      <div id="chart-card" class="card">
+        <h3 class="card-title">산업별 취업자 수</h3>
+        <p id="chart-sub" class="card-sub"></p>
+        <ol id="chart" class="bar-list" aria-label="산업별 취업자 수, 많은 순"></ol>
+        <p class="note">천 명 단위로 반올림한 값이라 산업을 모두 더하면 '전체 산업'과 조금 다를 수 있습니다.
+          광업처럼 취업자가 적은 산업은 조사 표본이 작아 오차가 클 수 있습니다.</p>
+      </div>
+
+      <!-- 오른쪽: 고른 산업 자세히 보기 -->
+      <aside id="detail" class="card detail" aria-labelledby="detail-name">
+        <p id="detail-eyebrow" class="eyebrow"></p>
+        <h3 id="detail-name" class="detail-name"></h3>
+        <p id="detail-code" class="card-sub"></p>
+
+        <dl class="stats" aria-live="polite">
+          <div class="stat">
+            <dt>취업자</dt>
+            <dd id="stat-total" class="stat-value"></dd>
+            <dd id="stat-total-sub" class="stat-sub"></dd>
+          </div>
+          <div class="stat">
+            <dt id="stat-change-label">변화</dt>
+            <dd id="stat-change" class="stat-value"></dd>
+            <dd id="stat-change-sub" class="stat-sub"></dd>
+          </div>
+          <div class="stat">
+            <dt>주당 평균 취업시간</dt>
+            <dd id="stat-hours" class="stat-value"></dd>
+            <dd id="stat-hours-sub" class="stat-sub"></dd>
+          </div>
+        </dl>
+
+        <p id="detail-insight" class="insight"></p>
+
+        <!-- 연령대 · 교육 정도 · 종사상 지위 비율 막대 -->
+        <div id="detail-groups"></div>
+
+        <p id="detail-legend" class="legend">
+          <span><span class="key key-bar" aria-hidden="true"></span>선택한 산업</span>
+          <span><span class="key key-mark" aria-hidden="true"></span>전체 산업</span>
+        </p>
+        <p class="note">비임금근로자 = 자영업자 + 무급가족종사자</p>
+        <a class="back-link" href="#chart-card">↑ 다른 산업 고르기</a>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- 3. 원본 표 -->
+  <section id="table-section" class="card table-card" aria-labelledby="table-title" data-needs-data hidden>
+    <h2 id="table-title" class="card-title">전체 데이터 표</h2>
+    <p class="card-sub">CSV에 들어 있던 순서(산업분류 코드 순) 그대로입니다. 단위: 천 명</p>
+    <div class="table-wrap">
+      <table id="table"></table>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    <p>자료: 통계청 국가통계포털(KOSIS), 산업별 취업자 2025년 상·하반기 (2026년 9월 23일 내려받음)</p>
+    <p><a href="index.html">← 과제 1 캠퍼스 핫스팟</a> · <a href="../index.html">3주차 캠퍼스 보물찾기 지도</a></p>
+  </footer>
+
+</body>
+</html>
