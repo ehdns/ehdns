@@ -29,6 +29,37 @@ body {
   background: #f7fafc;
 }
 
+.week-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.week-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px 14px;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  color: #174b76;
+  background: var(--card);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.week-nav a[aria-current="page"] {
+  color: #ffffff;
+  border-color: #174b76;
+  background: #174b76;
+}
+
+.week-nav a:focus-visible {
+  outline: 3px solid #c56200;
+  outline-offset: 2px;
+}
+
 img { max-width: 100%; height: auto; display: block; }
 
 /* =========================================

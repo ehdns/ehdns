@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>청년 취업 통계 탐구</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+      color: #263238;
+      font-family: system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    .page-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .page-nav a {
+      display: inline-block;
+      min-height: 44px;
+      padding: 9px 14px;
+      border: 1px solid #b8c6d1;
+      border-radius: 8px;
+      color: #174b76;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .page-nav a[aria-current="page"] {
+      color: #fff;
+      border-color: #174b76;
+      background: #174b76;
+    }
+
+    .page-nav a:focus-visible,
+    .chart-tabs button:focus-visible {
+      outline: 3px solid #c56200;
+      outline-offset: 2px;
+    }
+
+    .chart-card {
+      margin-top: 24px;
+      padding: 20px;
+      border: 1px solid #d7e0e7;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .chart-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+      border-bottom: 1px solid #d7e0e7;
+    }
+
+    .chart-tabs button {
+      min-height: 48px;
+      padding: 10px 16px;
+      border: 1px solid #b8c6d1;
+      border-bottom: 0;
+      border-radius: 8px 8px 0 0;
+      color: #263238;
+      background: #f3f6f8;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .chart-tabs button[aria-selected="true"] {
+      color: #fff;
+      border-color: #174b76;
+      background: #174b76;
+    }
+
+    .chart-panel h3 {
+      margin-top: 12px;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 440px;
+    }
+
+    .chart-container.ranking-chart {
+      height: 600px;
+    }
+
+    .status,
+    .note {
+      color: #52616b;
+    }
+
+    .interpretation {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-left: 4px solid #2563eb;
+      background: #f2f7ff;
+    }
+
+    .interpretation h4 {
+      margin: 0 0 8px;
+    }
+
+    .interpretation p {
+      margin: 0;
+    }
+
+    .data-links {
+      overflow-wrap: anywhere;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 1.65rem;
+      }
+
+      .chart-card {
+        padding: 12px;
+      }
+
+      .chart-tabs {
+        gap: 6px;
+      }
+
+      .chart-tabs button {
+        flex: 1 1 100%;
+        border: 1px solid #b8c6d1;
+        border-radius: 8px;
+      }
+
+      .chart-container {
+        height: 380px;
+      }
+
+      .chart-container.ranking-chart {
+        height: 560px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="page-nav" aria-label="주차 페이지 이동">
+    <a href="./index.html">탐험 페이지</a>
+    <a href="./statistics.html" aria-current="page">통계 페이지</a>
+    <a href="./game.html">게임 페이지</a>
+  </nav>
+
+  <header>
+    <h1>청년 취업자 수가 많은 지역은 청년 고용률도 높을까?</h1>
+    <p>탭을 눌러 두 그래프와 각각의 설명을 번갈아 확인할 수 있습니다.</p>
+  </header>
+
+  <main>
+    <section class="chart-card" aria-label="청년 취업 통계">
+      <p id="chart-status" class="status" role="status" aria-live="polite">
+        두 CSV 파일을 불러오는 중입니다...
+      </p>
+
+      <div class="chart-tabs" role="tablist" aria-label="청년 취업 그래프 선택">
+        <button
+          id="tab-scatter"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-scatter"
+          tabindex="0">
+          1. 취업자 수와 고용률
+        </button>
+        <button
+          id="tab-ranking"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-ranking"
+          tabindex="-1">
+          2. 지역별 취업자 수
+        </button>
+      </div>
+
+      <section
+        id="panel-scatter"
+        class="chart-panel"
+        role="tabpanel"
+        aria-labelledby="tab-scatter">
+        <h2>시도별 청년 취업자 수와 고용률</h2>
+        <p class="note">
+          대상: 15~29세, 시도별 소계(전국 제외). 가로축: 2026년 2분기 월 취업자 수 평균(천 명).
+          세로축: 2026년 2분기 고용률(%). 점 하나는 한 시도입니다.
+        </p>
+        <div class="chart-container">
+          <canvas id="scatter-chart" aria-label="시도별 청년 취업자 수와 고용률 산점도"></canvas>
+        </div>
+        <div class="interpretation">
+          <h3>그래프의 의미와 해석</h3>
+          <p>
+            이 산점도는 시도별 청년 취업자 수 규모와 청년 고용률을 비교합니다.
+            자료에서 경기도는 취업자 수가 약 964.3천 명으로 가장 많지만 고용률은 45.1%이며,
+            고용률이 가장 높은 충청북도(47.9%)의 취업자 수는 약 118.7천 명입니다.
+            따라서 취업자 수가 많은 지역이 반드시 고용률도 가장 높은 것은 아닙니다.
+            다만 취업자 수는 지역의 청년 인구 규모에도 영향을 받으며, 이 비교만으로 원인이나 개인의 취업 가능성을 설명할 수는 없습니다.
+          </p>
+        </div>
+        <p class="note">
+          출처: 국가데이터처 경제활동인구조사 —
+          <a href="https://kosis.kr/statHtml/statHtml.do?orgId=101&amp;tblId=DT_1DA7031S&amp;conn_path=I2">시도별·연령별 취업자 표</a>,
+          <a href="https://kosis.kr/statHtml/statHtml.do?orgId=101&amp;tblId=DT_1DA7015S&amp;conn_path=I2">시도별·연령별 경제활동인구·고용률 표</a>.
+          고용률은 분기값이며 취업자 수는 같은 분기 3개월의 평균입니다.
+        </p>
+        <p class="data-links">
+          원자료 CSV:
+          <a href="./data/youth-employment-monthly.csv" download>월간 취업자 수 내려받기</a> ·
+          <a href="./data/youth-employment-rate-quarterly.csv" download>분기 고용률 내려받기</a>
+        </p>
+      </section>
+
+      <section
+        id="panel-ranking"
+        class="chart-panel"
+        role="tabpanel"
+        aria-labelledby="tab-ranking"
+        hidden>
+        <h2>지역별 청년 취업자 수</h2>
+        <p class="note">
+          대상: 15~29세, 시도별 소계(전국 제외). 기간: 2026년 2분기(4~6월 평균).
+          막대가 길수록 청년 취업자 수가 많습니다. 단위: 천 명.
+        </p>
+        <div class="chart-container ranking-chart">
+          <canvas id="ranking-chart" aria-label="시도별 청년 취업자 수 순위 가로 막대 그래프"></canvas>
+        </div>
+        <div class="interpretation">
+          <h3>그래프의 의미와 해석</h3>
+          <p>
+            이 가로 막대그래프는 같은 분기 동안 각 시도의 청년 취업자 수 규모를 비교합니다.
+            경기도가 약 964.3천 명으로 가장 많고 서울특별시가 738.0천 명으로 뒤를 잇는 반면,
+            세종특별자치시는 약 20.7천 명으로 가장 적습니다.
+            이 차이는 취업자 수의 규모 차이를 보여주는 사실이며, 지역별 고용 기회나 고용률의 순위와 같다고 볼 수는 없습니다.
+            인구 규모를 고려한 비율 비교는 첫 번째 산점도에서 함께 확인해야 합니다.
+          </p>
+        </div>
+        <p class="note">
+          출처: 국가데이터처 경제활동인구조사 —
+          <a href="https://kosis.kr/statHtml/statHtml.do?orgId=101&amp;tblId=DT_1DA7031S&amp;conn_path=I2">행정구역(시도)/연령별 취업자 표</a>.
+          시도 소계의 2026년 4월·5월·6월 값을 산술평균했습니다.
+        </p>
+        <p class="data-links">
+          원자료 CSV:
+          <a href="./data/youth-employment-monthly.csv" download>월간 취업자 수 내려받기</a> ·
+          <a href="./data/youth-employment-rate-quarterly.csv" download>분기 고용률 내려받기</a>
+        </p>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <p><a href="./game.html">Canvas 슈팅 게임 해보기 →</a></p>
+    <p><a href="./index.html">탐험 페이지로 돌아가기</a></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <script src="./data/papaparse.min.js"></script>
+  <script src="./statistics.js"></script>
+</body>
+</html>
