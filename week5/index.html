@@ -513,8 +513,7 @@
       const url = new URL(location.href);
       url.search = "";
       url.hash = "";
-      url.searchParams.set("shared-result", record.type);
-      url.searchParams.set("score", String(exploreCount));
+      url.searchParams.set("shared-answers", QUESTIONS.map(question => record.answers[question.id]).join(""));
       url.searchParams.set("version", VERSION);
 
       const input = app.querySelector("#share-link");
@@ -539,15 +538,29 @@
 
     function readSharedResult() {
       const params = new URLSearchParams(location.search);
-      if (!params.has("shared-result")) return null;
-      const type = params.get("shared-result");
-      const score = Number(params.get("score"));
-      if (params.get("version") !== VERSION || !Object.hasOwn(RESULTS, type) ||
-          !Number.isInteger(score) || score < 0 || score > QUESTIONS.length || resultTypeFromScore(score) !== type) {
+      const encodedAnswers = params.get("shared-answers");
+      if (encodedAnswers === null && !params.has("shared-result")) return null;
+      if (params.get("version") !== VERSION) {
         inform("결과 공유 링크가 올바르지 않거나 이 버전에서 사용할 수 없습니다.");
         return null;
       }
-      return { type, score };
+      if (encodedAnswers === null) {
+        const type = params.get("shared-result");
+        const score = Number(params.get("score"));
+        if (!Object.hasOwn(RESULTS, type) || !Number.isInteger(score) ||
+            score < 0 || score > QUESTIONS.length || resultTypeFromScore(score) !== type) {
+          inform("결과 공유 링크가 올바르지 않거나 이 버전에서 사용할 수 없습니다.");
+          return null;
+        }
+        return { type, score, answers: null };
+      }
+      if (!new RegExp(`^[01]{${QUESTIONS.length}}$`).test(encodedAnswers)) {
+        inform("공유 링크의 답변 데이터가 올바르지 않습니다.");
+        return null;
+      }
+      const answers = Object.fromEntries(QUESTIONS.map((question, index) => [question.id, Number(encodedAnswers[index])]));
+      const score = Object.values(answers).reduce((total, answer) => total + answer, 0);
+      return { type: resultTypeFromScore(score), score, answers };
     }
 
     function resultTypeFromScore(score) {
@@ -568,16 +581,57 @@
             <p class="muted" id="shared-result-score"></p>
           </div>
           <p class="muted">이 테스트는 성격을 판정하는 검사가 아니라, 친구와 여행 취향을 나누기 위한 놀이예요.</p>
+          <section class="records">
+            <h2>친구의 선택</h2>
+            <div id="shared-answers"></div>
+          </section>
+          <section class="records">
+            <label for="compare-record">내 완료 기록과 비교하기</label>
+            <select id="compare-record"><option value="">내 기록 선택</option></select>
+            <div id="shared-comparison" aria-live="polite"></div>
+          </section>
           <div class="actions"><button id="start-from-share" type="button">나도 테스트하기</button></div>
         </section>`;
       app.querySelector("#shared-result-name").textContent = "친구가 공유한 결과";
       app.querySelector("#shared-result-type").textContent = result.name;
       app.querySelector("#shared-result-description").textContent = result.description;
       app.querySelector("#shared-result-score").textContent = `알차게 여행 즐기기 선택 ${shared.score} / ${QUESTIONS.length}`;
+      if (shared.answers) {
+        app.querySelector("#shared-answers").append(answerSummary({ answers: shared.answers }));
+        const compareRecord = app.querySelector("#compare-record");
+        for (const record of history) {
+          const option = makeText("option", `${record.nickname} · ${RESULTS[record.type].name}`);
+          option.value = record.id;
+          compareRecord.append(option);
+        }
+        compareRecord.addEventListener("change", () => compareSharedAnswers(shared.answers, compareRecord.value));
+      } else {
+        app.querySelector("#shared-answers").textContent = "이전 형식의 공유 링크라 친구의 문항별 선택은 포함되어 있지 않아요.";
+        app.querySelector("#compare-record").disabled = true;
+      }
       app.querySelector("#start-from-share").addEventListener("click", () => {
         window.history.replaceState(null, "", location.pathname);
         renderWelcome();
       });
+    }
+
+    function compareSharedAnswers(sharedAnswers, recordId) {
+      const record = history.find(item => item.id === recordId);
+      const box = app.querySelector("#shared-comparison");
+      box.replaceChildren();
+      if (!record) return;
+      let same = 0;
+      const list = document.createElement("ul");
+      for (const question of QUESTIONS) {
+        const mine = record.answers[question.id];
+        const friend = sharedAnswers[question.id];
+        const matches = mine === friend;
+        if (matches) same += 1;
+        const mineText = mine === 0 ? question.rest : question.explore;
+        const friendText = friend === 0 ? question.rest : question.explore;
+        list.append(makeText("li", `${matches ? "같아요" : "달라요"} · ${question.text} ${mineText} / ${friendText}`));
+      }
+      box.append(makeText("p", `${QUESTIONS.length}개 중 ${same}개 답변이 같아요.`), list);
     }
 
     function compareRecords(firstId, secondId) {
