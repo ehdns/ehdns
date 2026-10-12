@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>우리... 같이 여행 가도 괜찮을까?</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #26352f;
+      background: #f3f6ef;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 32px 16px;
+      background:
+        radial-gradient(circle at top right, #dcebd6 0, transparent 34rem),
+        #f3f6ef;
+    }
+
+    main {
+      width: min(100%, 680px);
+      margin: 0 auto;
+    }
+
+    .card {
+      padding: clamp(24px, 6vw, 44px);
+      border: 1px solid #e1e8dc;
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 18px 50px #304c3512;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #52785c;
+      font-size: .82rem;
+      font-weight: 750;
+      letter-spacing: .08em;
+    }
+
+    h1, h2, p { margin-top: 0; }
+    h1 { margin-bottom: 12px; font-size: clamp(2rem, 7vw, 3.1rem); line-height: 1.15; }
+    h2 { margin-bottom: 12px; font-size: clamp(1.45rem, 5vw, 2rem); line-height: 1.35; }
+    p { line-height: 1.7; }
+
+    .muted { color: #66736a; }
+    .axis {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 24px 0;
+    }
+
+    .axis span {
+      padding: 12px;
+      border-radius: 12px;
+      background: #eff5ec;
+      color: #385e40;
+      font-size: .9rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    label { display: block; margin-bottom: 8px; font-weight: 700; }
+    input {
+      width: 100%;
+      min-height: 48px;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border: 1px solid #cbd7c9;
+      border-radius: 12px;
+      font: inherit;
+    }
+
+    button {
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 12px;
+      background: #315d3c;
+      color: #fff;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    button:hover { background: #244a2e; }
+    button:focus-visible, input:focus-visible { outline: 3px solid #e1a94e; outline-offset: 3px; }
+    button.secondary { background: #eaf1e7; color: #31533a; }
+    button.secondary:hover { background: #dce9d8; }
+    button.danger { background: #fff0ed; color: #8a3528; }
+    button.danger:hover { background: #ffe2dc; }
+    button:disabled { cursor: not-allowed; opacity: .6; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+
+    .progress {
+      height: 8px;
+      margin: 22px 0 28px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #e8eee5;
+    }
+
+    .progress span { display: block; height: 100%; border-radius: inherit; background: #73a77b; }
+    .choices { display: grid; gap: 12px; margin-top: 24px; }
+    .choices button { min-height: 66px; text-align: left; line-height: 1.5; }
+    .result {
+      margin: 22px 0;
+      padding: 22px;
+      border-radius: 16px;
+      background: #eff5ec;
+    }
+
+    .result h2 { color: #315d3c; }
+    .records { margin-top: 28px; padding-top: 22px; border-top: 1px solid #e5ebe2; }
+    .records h2 { font-size: 1.15rem; }
+    .records ul { margin-bottom: 0; padding-left: 20px; }
+    .records li { margin: 8px 0; line-height: 1.5; }
+    .notice { min-height: 1.5em; margin: 14px 0 0; color: #8a4b24; font-size: .92rem; }
+
+    @media (max-width: 480px) {
+      body { padding: 16px 10px; }
+      .card { border-radius: 18px; }
+      .actions > button { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main id="app" aria-live="polite"></main>
+
+  <script>
+    const VERSION = "travel-v2";
+    const DRAFT_KEY = "week5.balance.draft";
+    const HISTORY_KEY = "week5.balance.history";
+    const MAX_HISTORY = 20;
+
+    const QUESTIONS = [
+      { id: "transit", text: "목적지까지 이동할 때는?", rest: "돈이 더 들더라도 택시로 편하게 이동하기", explore: "대중교통과 걷기로 동네 분위기까지 느끼기" },
+      { id: "interest", text: "여행 중 더 시간을 들이고 싶은 것은?", rest: "마음에 드는 물건을 천천히 둘러보며 쇼핑하기", explore: "현지의 유명한 먹거리를 찾아다니며 맛보기" },
+      { id: "nature", text: "자연을 즐기러 간다면?", rest: "바다를 바라보며 여유롭게 쉬기", explore: "산에 올라 걸으며 주변 풍경 감상하기" },
+      { id: "travel-style", text: "여행은 어떤 방식으로 떠나고 싶어?", rest: "이동과 일정이 편하게 준비된 패키지 여행", explore: "가고 싶은 곳을 직접 정하는 자유 여행" },
+      { id: "shopping", text: "쇼핑할 때 더 끌리는 곳은?", rest: "깔끔하고 정돈된 쇼핑몰을 여유롭게 둘러보기", explore: "활기찬 시장을 구경하며 현지 분위기 느끼기" },
+      { id: "memory", text: "여행의 순간을 어떻게 남기고 싶어?", rest: "사진은 몇 장만 찍고 풍경을 눈에 담기", explore: "마음에 드는 순간마다 사진으로 남기기" },
+      { id: "stay", text: "숙소를 고를 때 더 중요한 것은?", rest: "경비를 아낄 수 있는 가성비 좋은 숙소", explore: "쾌적한 객실과 안정적인 룸 컨디션이 보장되는 호텔" },
+      { id: "place", text: "여행지에서 더 끌리는 장소는?", rest: "내가 마음에 드는 곳을 찾아 머물기", explore: "무조건 가봐야 하는 관광지를 최대한 많이 보기" }
+    ];
+
+    const RESULTS = {
+      rest: { name: "느긋한 충전형", description: "여행의 여백과 컨디션을 소중히 여겨요. 무리하지 않고 오래 즐길 수 있는 일정을 친구와 맞춰 보세요." },
+      balance: { name: "여유와 탐험의 균형형", description: "꼭 하고 싶은 경험과 편안한 휴식을 함께 챙겨요. 하루에 핵심 일정 하나와 여유 시간을 두면 잘 맞아요." },
+      explore: { name: "알차게 누비는 탐험형", description: "이동과 새로운 경험도 여행의 재미예요. 가고 싶은 곳을 넉넉히 정하고 친구의 휴식 신호도 함께 살펴봐요." }
+    };
+
+    const app = document.querySelector("#app");
+    const memory = { sessionStorage: {}, localStorage: {} };
+    const unsaved = { sessionStorage: new Set(), localStorage: new Set() };
+    let draft = null;
+    let history = [];
+    let notice = "";
+    let selectedId = null;
+
+    function inform(message) {
+      notice = message;
+    }
+
+    function showNotice() {
+      const target = app.querySelector(".notice");
+      if (target) target.textContent = notice;
+      notice = "";
+    }
+
+    function readJSON(area, key, fallback) {
+      let raw;
+      try {
+        raw = window[area].getItem(key);
+        if (unsaved[area].has(key)) raw = memory[area][key] ?? null;
+      } catch (error) {
+        inform("저장소에 접근할 수 없어 이번 실행 중에만 임시로 기억합니다.");
+        raw = memory[area][key] ?? null;
+      }
+      if (raw === null) return fallback;
+      try {
+        return JSON.parse(raw);
+      } catch (error) {
+        inform("저장 데이터 형식이 올바르지 않아 기본값으로 시작합니다.");
+        removeKey(area, key);
+        return fallback;
+      }
+    }
+
+    function writeJSON(area, key, value) {
+      const raw = JSON.stringify(value);
+      memory[area][key] = raw;
+      try {
+        window[area].setItem(key, raw);
+        unsaved[area].delete(key);
+      } catch (error) {
+        unsaved[area].add(key);
+        inform("저장하지 못했습니다. 새로고침하면 변경 내용이 사라질 수 있습니다.");
+      }
+    }
+
+    function removeKey(area, key) {
+      delete memory[area][key];
+      try {
+        window[area].removeItem(key);
+        unsaved[area].delete(key);
+        return true;
+      } catch (error) {
+        unsaved[area].add(key);
+        inform("저장소에 접근할 수 없어 이번 실행의 값만 초기화했습니다.");
+        return false;
+      }
+    }
+
+    function validBase(value) {
+      return value && typeof value === "object" && value.version === VERSION &&
+        typeof value.id === "string" && value.id.length > 0 &&
+        typeof value.nickname === "string" && value.nickname.length <= 20;
+    }
+
+    function validAnswers(answers, complete) {
+      if (!answers || typeof answers !== "object" || Array.isArray(answers)) return false;
+      for (const [id, answer] of Object.entries(answers)) {
+        if (!QUESTIONS.some(question => question.id === id) || (answer !== 0 && answer !== 1)) return false;
+      }
+      return !complete || QUESTIONS.every(question => Object.hasOwn(answers, question.id));
+    }
+
+    function loadDraft() {
+      const value = readJSON("sessionStorage", DRAFT_KEY, null);
+      if (value === null) return null;
+      if (validBase(value) && validAnswers(value.answers, false) &&
+          Number.isInteger(value.current) && value.current >= 0 && value.current < QUESTIONS.length) return value;
+      inform("임시 답변의 형식이나 질문 버전이 달라 삭제했습니다.");
+      removeKey("sessionStorage", DRAFT_KEY);
+      return null;
+    }
+
+    function loadHistory() {
+      const value = readJSON("localStorage", HISTORY_KEY, []);
+      if (!Array.isArray(value)) {
+        inform("완료 기록 형식이 올바르지 않아 빈 목록으로 시작합니다.");
+        return [];
+      }
+      const valid = value.filter(record => validBase(record) &&
+        validAnswers(record.answers, true) &&
+        typeof record.completedAt === "string" && Number.isFinite(Date.parse(record.completedAt)) &&
+        Object.hasOwn(RESULTS, record.type));
+      if (valid.length !== value.length) inform("형식이 맞지 않거나 다른 질문 버전의 기록은 표시하지 않습니다.");
+      return valid.slice(-MAX_HISTORY);
+    }
+
+    function saveDraft() {
+      if (draft) writeJSON("sessionStorage", DRAFT_KEY, draft);
+    }
+
+    function resultType(answers) {
+      const score = QUESTIONS.reduce((sum, question) => sum + answers[question.id], 0);
+      if (score <= Math.floor(QUESTIONS.length / 3)) return "rest";
+      if (score >= Math.ceil(QUESTIONS.length * 2 / 3)) return "explore";
+      return "balance";
+    }
+
+    function makeId() {
+      return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    }
+
+    function makeText(tag, text) {
+      const element = document.createElement(tag);
+      element.textContent = text;
+      return element;
+    }
+
+    function action(label, callback, className = "") {
+      const button = makeText("button", label);
+      button.type = "button";
+      if (className) button.className = className;
+      button.addEventListener("click", callback);
+      return button;
+    }
+
+    function answerSummary(record) {
+      const list = document.createElement("ul");
+      for (const question of QUESTIONS) {
+        const choice = record.answers[question.id];
+        list.append(makeText("li", `${question.text} → ${choice === undefined ? "아직 선택하지 않음" : choice === 0 ? question.rest : question.explore}`));
+      }
+      return list;
+    }
+
+    function renderWelcome() {
+      app.innerHTML = `
+        <section class="card">
+          <p class="eyebrow">친구와 여행 취향 맞춰 보기</p>
+          <h1>우리... 같이 여행 가도 괜찮을까?</h1>
+          <p class="muted">나와 같이 여행 가는 너에게</p>
+          <form id="start-form">
+            <label for="nickname">별명 (선택, 20자까지)</label>
+            <input id="nickname" name="nickname" maxlength="20" autocomplete="nickname" placeholder="비워 두어도 좋아요">
+            <div class="actions"><button class="primary" type="submit">새로 시작</button>
+              <button class="secondary" id="resume" type="button" ${draft ? "" : "disabled"}>이어하기</button></div>
+          </form>
+          <p class="muted">새로 시작하면 진행 중인 답변을 바꿉니다. 완료 기록은 유지됩니다.</p>
+          <p id="draft-status" class="muted"></p>
+          <section class="records"><h2 id="history-count"></h2><div id="history-list"></div></section>
+          <section class="records">
+            <h2>내 데이터 관리</h2>
+            <div class="actions">
+              <button class="secondary" id="inspect" type="button">내 저장 데이터 보기</button>
+              <button class="secondary" id="delete-draft" type="button">진행 중인 답변 삭제</button>
+              <button class="danger" id="delete-all" type="button">테스트 데이터 전체 삭제</button>
+            </div>
+            <div id="data-view" hidden>
+              <h3>진행 중인 답변 · sessionStorage</h3><pre id="draft-data"></pre>
+              <h3>완료 기록 · localStorage</h3><pre id="history-data"></pre>
+            </div>
+          </section>
+          <p class="notice" role="status"></p>
+        </section>`;
+
+      app.querySelector("#start-form").addEventListener("submit", event => {
+        event.preventDefault();
+        const nickname = app.querySelector("#nickname").value.trim().slice(0, 20) || `참가자 ${history.length + 1}`;
+        draft = { id: makeId(), version: VERSION, nickname, current: 0, answers: {} };
+        saveDraft();
+        renderQuestion();
+      });
+      app.querySelector("#resume").addEventListener("click", () => {
+        if (draft) renderQuestion();
+      });
+      app.querySelector("#inspect").addEventListener("click", () => {
+        history = loadHistory();
+        draft = loadDraft();
+        const view = app.querySelector("#data-view");
+        view.hidden = !view.hidden;
+        app.querySelector("#draft-data").textContent = draft ? JSON.stringify(draft, null, 2) : "진행 중인 답변이 없습니다.";
+        app.querySelector("#history-data").textContent = JSON.stringify(history, null, 2);
+        showNotice();
+      });
+      app.querySelector("#delete-draft").addEventListener("click", deleteDraft);
+      app.querySelector("#delete-all").addEventListener("click", deleteAll);
+      if (draft) app.querySelector("#draft-status").textContent = `${draft.nickname}님의 답변 ${Object.keys(draft.answers).length}/${QUESTIONS.length}개가 저장되어 있어요.`;
+      renderHistoryList();
+      showNotice();
+    }
+
+    function renderHistoryList() {
+      const count = app.querySelector("#history-count");
+      const list = app.querySelector("#history-list");
+      if (!count || !list) return;
+      count.textContent = `저장된 결과 ${history.length}개`;
+      list.replaceChildren();
+      if (history.length === 0) {
+        list.append(makeText("p", "아직 완료 기록이 없어요."));
+        return;
+      }
+      for (const record of [...history].reverse()) {
+        const row = document.createElement("div");
+        row.className = "record";
+        row.append(makeText("p", `${record.nickname} · ${RESULTS[record.type].name} · ${new Date(record.completedAt).toLocaleString("ko-KR")}`));
+        row.append(action("결과 보기", () => renderResult(record.id)));
+        row.append(action("이 기록 삭제", () => deleteRecord(record.id), "danger"));
+        list.append(row);
+      }
+    }
+
+    function renderQuestion() {
+      if (!draft) return renderWelcome();
+      const question = QUESTIONS[draft.current];
+      const progress = Math.round((Object.keys(draft.answers).length / QUESTIONS.length) * 100);
+      app.innerHTML = `
+        <section class="card">
+          <p class="eyebrow"><span id="player-name"></span>님의 여행 취향</p>
+          <p class="muted">질문 ${draft.current + 1} / ${QUESTIONS.length}</p>
+          <div class="progress" role="progressbar" aria-label="진행 상황" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}"><span style="width:${progress}%"></span></div>
+          <h2 id="question"></h2>
+          <div class="choices">
+            <button class="secondary" id="choose-rest" type="button" aria-pressed="false"></button>
+            <button id="choose-explore" type="button" aria-pressed="false"></button>
+          </div>
+          <div class="actions">
+            <button class="secondary" id="previous" type="button">이전</button>
+            <button id="next" type="button" disabled>다음</button>
+          </div>
+          <p class="notice" role="status"></p>
+        </section>`;
+      app.querySelector("#player-name").textContent = draft.nickname;
+      app.querySelector("#question").textContent = question.text;
+      const restButton = app.querySelector("#choose-rest");
+      const exploreButton = app.querySelector("#choose-explore");
+      restButton.textContent = question.rest;
+      exploreButton.textContent = question.explore;
+      restButton.setAttribute("aria-pressed", String(draft.answers[question.id] === 0));
+      exploreButton.setAttribute("aria-pressed", String(draft.answers[question.id] === 1));
+      restButton.addEventListener("click", () => selectAnswer(question, 0));
+      exploreButton.addEventListener("click", () => selectAnswer(question, 1));
+      app.querySelector("#previous").disabled = draft.current === 0;
+      app.querySelector("#previous").addEventListener("click", () => {
+        if (draft.current === 0) return;
+        draft.current -= 1;
+        saveDraft();
+        renderQuestion();
+      });
+      const next = app.querySelector("#next");
+      next.disabled = draft.answers[question.id] === undefined;
+      next.textContent = draft.current === QUESTIONS.length - 1 ? "결과 보기" : "다음";
+      next.addEventListener("click", () => {
+        if (draft.answers[question.id] === undefined) return;
+        if (draft.current === QUESTIONS.length - 1) finish();
+        else {
+          draft.current += 1;
+          saveDraft();
+          renderQuestion();
+        }
+      });
+      showNotice();
+    }
+
+    function selectAnswer(question, answer) {
+      draft.answers[question.id] = answer;
+      saveDraft();
+      renderQuestion();
+    }
+
+    function finish() {
+      if (!draft || !validAnswers(draft.answers, true)) return;
+      history = loadHistory();
+      const record = {
+        id: draft.id,
+        version: VERSION,
+        nickname: draft.nickname,
+        answers: { ...draft.answers },
+        type: resultType(draft.answers),
+        completedAt: new Date().toISOString()
+      };
+      if (!history.some(item => item.id === record.id)) {
+        history.push(record);
+        history = history.slice(-MAX_HISTORY);
+        writeJSON("localStorage", HISTORY_KEY, history);
+      }
+      draft = null;
+      removeKey("sessionStorage", DRAFT_KEY);
+      renderResult(record.id);
+    }
+
+    function renderResult(id) {
+      const record = history.find(item => item.id === id);
+      if (!record) return renderWelcome();
+      selectedId = id;
+      const result = RESULTS[record.type];
+      app.innerHTML = `
+        <section class="card">
+          <p class="eyebrow">여행 취향 결과</p>
+          <h1 id="result-heading"></h1>
+          <div class="result">
+            <h2 id="result-name"></h2>
+            <p id="result-description"></p>
+            <p class="muted" id="result-score"></p>
+            <p class="muted" id="result-time"></p>
+          </div>
+          <p class="muted">이 테스트는 성격을 판정하는 검사가 아니라, 친구와 여행 취향을 나누기 위한 놀이예요. 답이 다른 질문을 골라 서로의 이유를 이야기해 보세요.</p>
+          <section class="records">
+            <h2>결과 공유</h2>
+            <div class="actions"><button class="secondary" id="make-share-link" type="button">결과 링크 만들기</button></div>
+            <label id="share-link-label" for="share-link" hidden>친구에게 보낼 링크</label>
+            <input id="share-link" type="url" readonly hidden>
+            <p id="share-notice" class="notice" role="status"></p>
+          </section>
+          <h2>내 선택</h2><div id="result-answers"></div>
+          <label for="friend">이 기록과 비교할 친구</label>
+          <select id="friend"><option value="">친구를 선택하세요</option></select>
+          <div id="comparison" aria-live="polite"></div>
+          <section class="records"><h2>저장된 결과 ${history.length}개</h2><div id="history-list"></div></section>
+          <div class="actions">
+            <button id="next-person" type="button">다음 친구 도전</button>
+            <button class="secondary" id="home" type="button">처음 화면</button>
+            <button class="danger" id="delete-all" type="button">테스트 데이터 전체 삭제</button>
+          </div>
+          <p class="notice" role="status"></p>
+        </section>`;
+      app.querySelector("#result-heading").textContent = `${record.nickname}님의 여행 스타일`;
+      app.querySelector("#result-name").textContent = result.name;
+      app.querySelector("#result-description").textContent = result.description;
+      const exploreCount = QUESTIONS.filter(question => record.answers[question.id] === 1).length;
+      app.querySelector("#result-score").textContent = `알차게 여행 즐기기 선택 ${exploreCount} / ${QUESTIONS.length}`;
+      app.querySelector("#result-time").textContent = `완료 시각 · ${new Date(record.completedAt).toLocaleString("ko-KR")}`;
+      app.querySelector("#result-answers").append(answerSummary(record));
+      app.querySelector("#make-share-link").addEventListener("click", () => shareResult(record));
+      const friend = app.querySelector("#friend");
+      for (const item of history) {
+        if (item.id === id) continue;
+        const option = makeText("option", `${item.nickname} · ${new Date(item.completedAt).toLocaleTimeString("ko-KR")}`);
+        option.value = item.id;
+        friend.append(option);
+      }
+      friend.addEventListener("change", () => compareRecords(id, friend.value));
+      app.querySelector("#next-person").addEventListener("click", deleteDraft);
+      app.querySelector("#home").addEventListener("click", renderWelcome);
+      app.querySelector("#delete-all").addEventListener("click", deleteAll);
+      renderHistoryList();
+      showNotice();
+    }
+
+    function shareResult(record) {
+      const exploreCount = QUESTIONS.filter(question => record.answers[question.id] === 1).length;
+      const url = new URL(location.href);
+      url.search = "";
+      url.hash = "";
+      url.searchParams.set("shared-result", record.type);
+      url.searchParams.set("score", String(exploreCount));
+      url.searchParams.set("version", VERSION);
+
+      const input = app.querySelector("#share-link");
+      const label = app.querySelector("#share-link-label");
+      const status = app.querySelector("#share-notice");
+      input.value = url.href;
+      input.hidden = false;
+      label.hidden = false;
+      input.select();
+      if (!navigator.clipboard?.writeText) {
+        status.textContent = "링크를 선택해 복사한 뒤 친구에게 보내세요.";
+        return;
+      }
+      navigator.clipboard.writeText(url.href).then(() => {
+        status.textContent = "결과 링크를 복사했어요. 친구에게 보내세요.";
+      }).catch(error => {
+        console.error(error);
+        input.select();
+        status.textContent = "링크를 자동 복사하지 못했어요. 선택된 링크를 복사해 보내세요.";
+      });
+    }
+
+    function readSharedResult() {
+      const params = new URLSearchParams(location.search);
+      if (!params.has("shared-result")) return null;
+      const type = params.get("shared-result");
+      const score = Number(params.get("score"));
+      if (params.get("version") !== VERSION || !Object.hasOwn(RESULTS, type) ||
+          !Number.isInteger(score) || score < 0 || score > QUESTIONS.length || resultTypeFromScore(score) !== type) {
+        inform("결과 공유 링크가 올바르지 않거나 이 버전에서 사용할 수 없습니다.");
+        return null;
+      }
+      return { type, score };
+    }
+
+    function resultTypeFromScore(score) {
+      if (score <= Math.floor(QUESTIONS.length / 3)) return "rest";
+      if (score >= Math.ceil(QUESTIONS.length * 2 / 3)) return "explore";
+      return "balance";
+    }
+
+    function renderSharedResult(shared) {
+      const result = RESULTS[shared.type];
+      app.innerHTML = `
+        <section class="card">
+          <p class="eyebrow">공유받은 여행 취향 결과</p>
+          <h1 id="shared-result-name"></h1>
+          <div class="result">
+            <h2 id="shared-result-type"></h2>
+            <p id="shared-result-description"></p>
+            <p class="muted" id="shared-result-score"></p>
+          </div>
+          <p class="muted">이 테스트는 성격을 판정하는 검사가 아니라, 친구와 여행 취향을 나누기 위한 놀이예요.</p>
+          <div class="actions"><button id="start-from-share" type="button">나도 테스트하기</button></div>
+        </section>`;
+      app.querySelector("#shared-result-name").textContent = "친구가 공유한 결과";
+      app.querySelector("#shared-result-type").textContent = result.name;
+      app.querySelector("#shared-result-description").textContent = result.description;
+      app.querySelector("#shared-result-score").textContent = `알차게 여행 즐기기 선택 ${shared.score} / ${QUESTIONS.length}`;
+      app.querySelector("#start-from-share").addEventListener("click", () => {
+        window.history.replaceState(null, "", location.pathname);
+        renderWelcome();
+      });
+    }
+
+    function compareRecords(firstId, secondId) {
+      const first = history.find(record => record.id === firstId);
+      const second = history.find(record => record.id === secondId);
+      const box = app.querySelector("#comparison");
+      box.replaceChildren();
+      if (!first || !second) return;
+      let same = 0;
+      const list = document.createElement("ul");
+      for (const question of QUESTIONS) {
+        const firstAnswer = first.answers[question.id];
+        const secondAnswer = second.answers[question.id];
+        const matches = firstAnswer === secondAnswer;
+        if (matches) same += 1;
+        const firstText = firstAnswer === 0 ? question.rest : question.explore;
+        const secondText = secondAnswer === 0 ? question.rest : question.explore;
+        list.append(makeText("li", `${matches ? "같아요" : "달라요"} · ${question.text} ${firstText} / ${secondText}`));
+      }
+      box.append(makeText("p", `${QUESTIONS.length}개 중 ${same}개 답변이 같아요.`), list);
+    }
+
+    function deleteRecord(id) {
+      history = loadHistory().filter(record => record.id !== id);
+      writeJSON("localStorage", HISTORY_KEY, history);
+      if (selectedId === id) {
+        selectedId = null;
+        renderWelcome();
+      } else if (selectedId) {
+        renderResult(selectedId);
+      } else {
+        const sharedResult = readSharedResult();
+        if (sharedResult) renderSharedResult(sharedResult);
+        else renderWelcome();
+      }
+    }
+
+    function deleteDraft() {
+      draft = null;
+      removeKey("sessionStorage", DRAFT_KEY);
+      selectedId = null;
+      renderWelcome();
+    }
+
+    function deleteAll() {
+      if (!window.confirm("이 탭의 진행 중 답변과 이 브라우저의 완료 기록을 모두 삭제할까요?")) return;
+      draft = null;
+      history = [];
+      selectedId = null;
+      const draftRemoved = removeKey("sessionStorage", DRAFT_KEY);
+      const historyRemoved = removeKey("localStorage", HISTORY_KEY);
+      if (draftRemoved && historyRemoved) inform("이 테스트의 임시 답변과 완료 기록을 삭제했습니다.");
+      renderWelcome();
+    }
+
+    history = loadHistory();
+    draft = loadDraft();
+    if (draft && history.some(record => record.id === draft.id)) {
+      draft = null;
+      removeKey("sessionStorage", DRAFT_KEY);
+    }
+    const sharedResult = readSharedResult();
+    if (sharedResult) renderSharedResult(sharedResult);
+    else renderWelcome();
+  </script>
+</body>
+</html>
