@@ -39,11 +39,29 @@ let lastFrameTime = 0;
 let canvasPointerId = null;
 
 function currentDifficultyLevel() {
-  return Math.floor(score / 500);
+  return Math.min(2, Math.floor(score / 500));
 }
 
+const difficultyNames = ["쉬움", "중간", "어려움"];
+const enemySpawnIntervals = [1.05, 0.8, 0.6];
+
 function currentSpeedMultiplier() {
-  return Math.min(1.8, 1 + currentDifficultyLevel() * 0.08);
+  return [1, 1.25, 1.5][currentDifficultyLevel()];
+}
+
+function updateDifficultyDisplay() {
+  levelOutput.value = difficultyNames[currentDifficultyLevel()];
+}
+
+function damagePlayer() {
+  if (player.invulnerable > 0) return;
+
+  lives -= 1;
+  livesOutput.value = String(lives);
+  player.invulnerable = 1.2;
+  if (lives <= 0) {
+    finishGame();
+  }
 }
 
 function movePlayerToPointer(event) {
@@ -71,7 +89,7 @@ function startGame() {
   player.invulnerable = 0;
   scoreOutput.value = "0";
   livesOutput.value = "3";
-  levelOutput.value = "1";
+  updateDifficultyDisplay();
   gameState = "playing";
   overlay.hidden = true;
   lastFrameTime = performance.now();
@@ -156,12 +174,20 @@ function updateGame(deltaTime) {
   spawnTimer -= deltaTime;
   if (spawnTimer <= 0) {
     spawnEnemy();
-    spawnTimer = Math.max(0.5, 1.05 - currentDifficultyLevel() * 0.04);
+    spawnTimer = enemySpawnIntervals[currentDifficultyLevel()];
   }
 
   for (const enemy of enemies) {
     enemy.y += enemy.speed * deltaTime;
     enemy.x = enemy.baseX + Math.sin(enemy.y / 48 + enemy.wave) * 34;
+
+    if (enemy.y - enemy.radius > height) {
+      enemy.removed = true;
+      damagePlayer();
+      if (gameState !== "playing") return;
+      continue;
+    }
+
     enemy.fireTimer -= deltaTime;
 
     if (enemy.fireTimer <= 0) {
@@ -195,7 +221,7 @@ function updateGame(deltaTime) {
         enemy.removed = true;
         score += 100;
         scoreOutput.value = String(score);
-        levelOutput.value = String(currentDifficultyLevel() + 1);
+        updateDifficultyDisplay();
         break;
       }
     }
@@ -204,14 +230,9 @@ function updateGame(deltaTime) {
   for (const shot of enemyShots) {
     if (Math.hypot(shot.x - player.x, shot.y - player.y) < player.radius + 7) {
       shot.removed = true;
-      if (player.invulnerable === 0) {
-        lives -= 1;
-        livesOutput.value = String(lives);
-        player.invulnerable = 1.2;
-        if (lives <= 0) {
-          finishGame();
-          return;
-        }
+      damagePlayer();
+      if (gameState !== "playing") {
+        return;
       }
     }
   }
